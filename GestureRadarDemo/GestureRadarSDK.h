@@ -1,43 +1,64 @@
 #pragma once
 #include <iostream>
+#include <vector>
 using namespace std;
-
-//用户的回调函数定义
-typedef int(__stdcall * CallBackHandle)(int x, int y, int reserve, int z);
-
 
 //异步API，用户需要先注册回调函数
 /*
+Summary:
 Asynchronous API
 Developer should register call back function first
+
+@param:
+callbackRawDataFunc: user define address of function，raw data function
+callbackRecognizedResultFunc: user define address of function，recognise data function
+bStartRecognizing: begin to recognizing? if true, need input callbackRecognizedResultFunc address
+strNames : recognizing data ***.dat, need our tool to establish module
+@return
+None
 */
-__declspec(dllexport) void __stdcall registerLoopCallBack(CallBackHandle callbackFunc);
+extern "C" void __declspec(dllexport) __stdcall registerLoopCallBack(int(*callbackRawDataFunc)(int, int, int, int), int(*callbackRecognizedResultFunc)(const char *, double), bool bStartRecognizing, int nTemplateNum, const char *strTemplateNames[]);
 
 
 
 //异步API，释放回调函数，释放线程资源
 /*
+Summary:
 Asynchronous API
 Realease call back function
+
+@param:
+None
+
+@return
+None
 */
-__declspec(dllexport) void releaseCallBack();
+extern "C" void __declspec(dllexport) releaseLoopCallBack();
 
 
 
-//同步API，找到工作的串口，并打开
+
+
+
+
+
+
+
+//同步API，找到工作的串口，并打开，不建议同步的方式
 /*
+*Summary:
 Synchronous  API
-initial serial port and find working serial port
+initial serial port and find working serial port, we do not suggest use it
 
 *Parameters:
-
-*   mscTimeOut User set read microsecond timeout for gesture radar
+mscTimeOut User set read microsecond timeout for gesture radar
 -1 wait forever
+
 @return
 true    initial success
 false   initial failed
 */
-__declspec(dllexport) bool initialHW(int mscTimeOut);
+extern "C" bool __declspec(dllexport) initialHW(int mscTimeOut);
 
 
 
@@ -58,12 +79,19 @@ int &z 传入z地址参数 z value address
 true    read success
 false   read failed
 */
-__declspec(dllexport) bool getRawData(int &x, int &y, int &reserve, int &z);
+extern "C" bool __declspec(dllexport) getRawData(int &x, int &y, int &reserve, int &z);
+
 
 
 //同步API，释放串口
 /*
 Summary: Synchronous  API
 realease serial port
+
+@param:
+None
+
+@return
+None
 */
-__declspec(dllexport) void releaseHW();
+extern "C" void __declspec(dllexport) releaseHW();
